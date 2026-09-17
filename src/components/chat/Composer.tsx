@@ -44,6 +44,7 @@ export default function Composer({ onSendMessage, disabled = false }: ComposerPr
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask a question about this document..."
+            aria-label="Message input"
             className="flex-1 bg-transparent border-none outline-none text-ink text-[15px] placeholder:text-slate/60 min-w-0"
             disabled={disabled}
           />

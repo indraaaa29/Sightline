@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sightline Legal Advisor
 
-## Getting Started
+Sightline is a document-grounded AI legal intelligence platform designed to help users quickly understand complex legal documents (such as NDAs, leases, and service agreements) and prepare for discussions with legal professionals.
 
-First, run the development server:
+## Chosen Vertical / Persona
+**Legal.** Sightline is built for individuals and small business owners who need to review and understand legal documents before committing to them, or before seeking formal legal counsel.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Problem Being Solved
+Legal documents are often dense, long, and filled with jargon. Non-lawyers struggle to identify key obligations, risks, important dates, and inconsistencies. Sightline solves this by providing immediate, grounded analysis to highlight what matters most, helping users organize their thoughts and questions prior to speaking with a licensed legal professional.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Solution Approach
+Sightline combines client-side document processing (PDF parsing and OCR) with server-side AI reasoning using Gemini 2.5 Flash via OpenRouter. The AI acts as a sophisticated reading assistant that strictly grounds its answers in the provided text, ensuring that users receive facts from the document separated from general explanations.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
+- **Framework**: Next.js (App Router)
+- **Styling**: Tailwind CSS
+- **Document Processing**: `pdfjs-dist` (PDF text extraction), `tesseract.js` (client-side OCR)
+- **AI Integration**: OpenRouter API invoking Google's `gemini-2.5-flash` model.
+- **Export**: `jspdf` for client-side report generation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Document Processing Flow
+1. **Upload**: User uploads a document (PDF).
+2. **Extraction**: The client attempts to extract text using `pdfjs-dist`.
+3. **Fallback OCR**: If the PDF is a scanned image with no extractable text, Sightline automatically falls back to client-side OCR using `tesseract.js`.
+4. **Analysis**: Extracted text is sent to the server-side API, where structured prompts request analysis based on the document type.
 
-## Learn More
+## OpenRouter/Gemini Integration
+Sightline uses a secure server-side API route (`/api/documents/analyze/route.ts` and `/api/chat/route.ts`) to communicate with OpenRouter. The AI model is instructed to output strictly structured JSON matching our application's expected typings, enabling rich UI experiences.
 
-To learn more about Next.js, take a look at the following resources:
+## Document-Grounded Reasoning
+Every AI response is strictly tied to the uploaded document. The AI is instructed to provide the plain-language explanation alongside the exact source text ("What the document says"), complete with page numbers, ensuring high confidence and traceability.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Main V1 Capabilities
+- **Understand**: Plain-language document summary, key terms, and dates.
+- **Key Information**: Highlights critical metadata (parties, financial terms).
+- **Clause Explorer**: Detailed breakdown of important clauses and their risk levels.
+- **Obligations**: Actionable list of who must do what, and when.
+- **Risk Review**: Highlights potential concerns or aggressive terms.
+- **Inconsistency Detection**: Identifies conflicting terms within the same document.
+- **Action Checklist**: A generated checklist of items to verify or follow up on.
+- **Review Preparation**: Organizes document findings into a structured guide for consulting a lawyer.
+- **Document Comparison**: Compare differences and changes between two uploaded documents.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Assumptions and Limitations
+- **Client-Side OCR**: Processing large scanned PDFs entirely in the browser using Tesseract.js may be slow on lower-end devices.
+- **AI Reliability**: AI can make mistakes. The analysis relies on LLM capabilities and should not be treated as a substitute for professional legal advice.
+- **Export**: PDF export is implemented entirely client-side using `jspdf`.
 
-## Deploy on Vercel
+## Legal Disclaimer
+**Sightline provides information, not legal advice.** Sightline is an AI-powered reading assistant. It is not a law firm and does not substitute for the advice of a qualified legal professional. Always consult a lawyer before signing legally binding agreements.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Setup Instructions
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env.local` file in the root directory and add your OpenRouter API key:
+   ```env
+   OPENROUTER_API_KEY=sk-or-v1-...
+   OPENROUTER_MODEL=google/gemini-2.5-flash
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing Information
+- Run `npm run build` to verify the production build succeeds without TypeScript or routing errors.
+- Test with both text-based PDFs (e.g., standard digital contracts) and scanned image PDFs (to verify the Tesseract.js OCR fallback).
+- Upload two documents in the comparison view to verify the comparison capabilities.
+- Test the chat feature by asking specific questions about the document to ensure the AI quotes the text accurately.
