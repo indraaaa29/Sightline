@@ -22,7 +22,23 @@ CRITICAL RULES:
 3. Never fabricate clauses, quotations, sections, page numbers, obligations, risks, or other document-specific facts.
 4. If you use provided document context, ground your answers strictly in that context. When quoting the document, quote only text actually present in the supplied document.
 5. Do not claim to have analyzed pages or sections that were not provided.
-6. When the document does not contain enough information to answer the question, explicitly say that the available document content is insufficient.`;
+6. When the document does not contain enough information to answer the question, explicitly say that the available document content is insufficient.
+7. Always maintain the boundary: "Sightline provides information, not legal advice." Never present unsupported legal conclusions as definitive.
+
+ANSWER FORMAT:
+When appropriate, structure your answer clearly using Markdown:
+
+**Answer**
+[plain-language answer]
+
+**What the document says**
+[document-grounded evidence, with page/section numbers if available]
+
+**In practical terms**
+[explanation]
+
+**Worth reviewing**
+[optional - only if there are specific concerns or caveats]`;
 
 export async function POST(req: Request) {
   try {
@@ -51,7 +67,13 @@ export async function POST(req: Request) {
     if (documentContext && documentContext.filename) {
       if (documentContext.pages && Array.isArray(documentContext.pages) && documentContext.pages.length > 0) {
         let fullDocumentText = `Document Name: ${documentContext.filename}\n`;
-        fullDocumentText += `Total Pages: ${documentContext.pageCount || documentContext.pages.length}\n\n`;
+        fullDocumentText += `Total Pages: ${documentContext.pageCount || documentContext.pages.length}\n`;
+        
+        if (documentContext.extractionMethod === "ocr") {
+          fullDocumentText += `EXTRACTION METHOD: OCR\n\n`;
+        } else {
+          fullDocumentText += `\n`;
+        }
         
         let rawText = "";
         for (const page of documentContext.pages) {
@@ -65,9 +87,21 @@ export async function POST(req: Request) {
            });
         } else {
            fullDocumentText += rawText;
+           
+           let instructions = `The user has uploaded the following document context. You MUST use this exact text to answer document-specific questions. \n\n${fullDocumentText}`;
+           
+           if (documentContext.extractionMethod === "ocr") {
+             instructions += `\n\nCRITICAL OCR INSTRUCTIONS:\n`;
+             instructions += `- This text was extracted using OCR and may contain recognition errors.\n`;
+             instructions += `- Be cautious with names, dates, amounts, section numbers, negations, and legal terminology.\n`;
+             instructions += `- Do not invent text that OCR did not provide.\n`;
+             instructions += `- Do not invent page numbers.\n`;
+             instructions += `- If the answer depends on text that appears unclear or missing due to poor OCR quality, say so.\n`;
+           }
+           
            formattedMessages.push({
              role: "system",
-             content: `The user has uploaded the following document context. You MUST use this exact text to answer document-specific questions. \n\n${fullDocumentText}`
+             content: instructions
            });
         }
       } else {

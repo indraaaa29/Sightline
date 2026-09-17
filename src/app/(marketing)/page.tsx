@@ -182,7 +182,6 @@ export default function MarketingHome() {
             ].map((item, i) => (
               <ScrollReveal key={item.step} delay={i * 150}>
                 <div className="relative flex flex-col items-start md:px-8 md:first:pl-0 md:last:pr-0">
-                  {i > 0 && <div className="hidden md:block absolute left-0 top-0 bottom-0 w-px bg-line" />}
                   <div className="flex items-center gap-3 mb-5">
                     <span className="text-[13px] font-bold text-signal">{item.step}</span>
                     <div className="w-9 h-9 rounded-full border border-line flex items-center justify-center bg-paper">
@@ -249,6 +248,7 @@ export default function MarketingHome() {
                       highlight="provided that all outstanding obligations have been satisfied in full"
                       plainLanguage="You can end the agreement with 30 days' notice, but only after completing your outstanding obligations."
                       riskLevel="unusual"
+                      animateOnScroll
                     />
                   </div>
                 </div>
@@ -339,7 +339,7 @@ export default function MarketingHome() {
             
             <ScrollReveal delay={150} className="h-full">
               <div className="bg-white/5 border border-white/10 rounded-12 p-8 md:p-10 flex flex-col justify-center hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-lg h-full">
-                <AlertTriangle className="w-6 h-6 text-signal mb-4" strokeWidth={1.5} />
+                <AlertTriangle className="w-6 h-6 text-signal mb-4 animate-pulse" strokeWidth={1.5} />
                 <h3 className="text-[20px] font-semibold mb-3">Clear Limitations</h3>
                 <p className="text-[15px] text-white/80 leading-relaxed mb-4">
                   <strong className="text-white">Sightline provides information, not legal advice.</strong>

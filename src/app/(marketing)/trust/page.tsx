@@ -1,6 +1,8 @@
+import ScrollReveal from "@/components/layout/ScrollReveal";
+
 export default function TrustPage() {
   return (
-    <div className="flex-1 max-w-[800px] w-full mx-auto px-6 lg:px-16 py-16 md:py-24 flex flex-col text-left">
+    <ScrollReveal className="flex-1 max-w-[800px] w-full mx-auto px-6 lg:px-16 py-16 md:py-24 flex flex-col text-left">
       <h1 className="font-serif text-h1-mobile md:text-h1-desktop text-ink mb-6">
         How Sightline handles your documents
       </h1>
@@ -37,6 +39,6 @@ export default function TrustPage() {
           </p>
         </section>
       </div>
-    </div>
+    </ScrollReveal>
   );
 }

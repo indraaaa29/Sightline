@@ -9,7 +9,7 @@ export default function FAQPage() {
 
       <FAQAccordion />
 
-      <div className="mt-16 pt-12 border-t border-line flex flex-col items-start gap-4">
+      <div className="mt-16 pt-12 flex flex-col items-start gap-4">
         <h2 className="font-serif text-h3-mobile md:text-h3-desktop text-ink">Still have questions?</h2>
         <p className="text-body-regular-mobile md:text-body-regular-desktop text-slate">
           Send us an email and we'll get back to you.

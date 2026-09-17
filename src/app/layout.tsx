@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
-import AgentationDev from "@/components/dev/AgentationDev";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,10 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`}>
       <body className="min-h-screen flex flex-col antialiased">
-        <main className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col min-h-0 bg-paper">
           {children}
         </main>
-        <AgentationDev />
       </body>
     </html>
   );

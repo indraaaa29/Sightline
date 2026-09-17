@@ -13,7 +13,7 @@ const config: Config = {
       colors: {
         ink: "#17211F",
         deep: "#10242B",
-        paper: "#F7F5F0",
+        paper: "#F7F6F2",
         slate: "#52616B",
         signal: {
           DEFAULT: "#A67C3A",

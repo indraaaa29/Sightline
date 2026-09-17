@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     (globalThis as any).Path2D = class Path2D {};
   }
   
-  const pdf = require("pdf-parse");
+  const pdf = require("pdf-parse/lib/pdf-parse.js");
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -71,8 +71,8 @@ export async function POST(req: Request) {
         filename: file.name,
         pageCount: data.numpages,
         pages: [],
-        status: "unreadable",
-        message: "This PDF doesn't contain machine-readable text. Text extraction could not find readable content. OCR support is required to analyze scanned pages."
+        status: "requires_ocr",
+        message: "Insufficient machine-readable text detected; attempting OCR."
       });
     }
 

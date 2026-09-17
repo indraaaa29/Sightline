@@ -9,7 +9,7 @@ interface SidebarProps {
 
 export default function Sidebar({ documents, onUploadClick }: SidebarProps) {
   return (
-    <aside className="w-[280px] bg-deep border-r border-line hidden md:flex flex-col h-screen overflow-y-auto">
+    <aside className="w-[280px] shrink-0 bg-deep border-r border-line hidden md:flex flex-col h-full overflow-y-auto">
       {/* Branding */}
       <div className="px-6 py-6 border-b border-white/10">
         <Link href="/" aria-label="Go to Sightline home" className="block hover:opacity-80 transition-opacity">
