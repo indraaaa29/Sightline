@@ -22,6 +22,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Only PDF files are supported" }, { status: 400 });
     }
 
+    if (file.size > 20 * 1024 * 1024) {
+      return NextResponse.json({ error: "File size exceeds the 20MB limit" }, { status: 413 });
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const pages: DocumentPage[] = [];
 

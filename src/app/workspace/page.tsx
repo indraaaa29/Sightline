@@ -385,7 +385,7 @@ export default function Workspace() {
               <div className="w-full max-w-[800px] flex flex-col flex-1 pb-4">
                 {/* Document tabs */}
                 <div className="flex justify-center border-b border-line px-6 pt-6 mb-6">
-                  <div className="flex items-center gap-10">
+                  <div className="flex items-center gap-10" role="tablist" aria-label="Workspace Views">
                     {[
                       { id: "chat", label: "Chat" },
                       { id: "document", label: "Key Info" },
@@ -400,10 +400,29 @@ export default function Workspace() {
                     ].map((tab) => (
                       <button
                         key={tab.id}
+                        role="tab"
+                        aria-selected={activeTab === tab.id}
+                        aria-controls={`panel-${tab.id}`}
+                        id={`tab-${tab.id}`}
                         onClick={() => setActiveTab(tab.id as any)}
                         className={`pb-3 text-[14px] font-medium transition-colors relative ${
                           activeTab === tab.id ? "text-ink" : "text-slate/70 hover:text-ink"
                         }`}
+                        onKeyDown={(e) => {
+                          const tabs = ["chat", "document", "summary", "clauses", "obligations", "checklist", "risk", "inconsistencies", "compare", "prepare"];
+                          const currentIndex = tabs.indexOf(tab.id);
+                          if (e.key === "ArrowRight") {
+                            const nextIndex = (currentIndex + 1) % tabs.length;
+                            window.document.getElementById(`tab-${tabs[nextIndex]}`)?.focus();
+                          } else if (e.key === "ArrowLeft") {
+                            const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                            window.document.getElementById(`tab-${tabs[prevIndex]}`)?.focus();
+                          } else if (e.key === "Home") {
+                            window.document.getElementById(`tab-${tabs[0]}`)?.focus();
+                          } else if (e.key === "End") {
+                            window.document.getElementById(`tab-${tabs[tabs.length - 1]}`)?.focus();
+                          }
+                        }}
                       >
                         {tab.label}
                         {activeTab === tab.id && (
@@ -416,7 +435,7 @@ export default function Workspace() {
 
                 {/* Chat Thread */}
                 {activeTab === "chat" && (
-                  <>
+                  <div role="tabpanel" id="panel-chat" aria-labelledby="tab-chat" className="w-full flex flex-col items-center">
                     <ChatThread messages={messages} document={document || undefined} />
                     {messages.filter(m => m.role === 'user').length === 0 && document && document.status === "complete" && (
                       <div className="px-4 md:px-6 w-full max-w-[720px] mx-auto">
@@ -428,34 +447,52 @@ export default function Workspace() {
                         <ThinkingIndicator />
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
                 {activeTab === "summary" && document && (
-                  <UnderstandView document={document} />
+                  <div role="tabpanel" id="panel-summary" aria-labelledby="tab-summary" className="w-full">
+                    <UnderstandView document={document} />
+                  </div>
                 )}
                 {activeTab === "document" && document && (
-                  <KeyInformationView document={document} />
+                  <div role="tabpanel" id="panel-document" aria-labelledby="tab-document" className="w-full">
+                    <KeyInformationView document={document} />
+                  </div>
                 )}
                 {activeTab === "clauses" && document && (
-                  <ClauseExplorerView document={document} onAskAboutClause={handleAskAboutClause} />
+                  <div role="tabpanel" id="panel-clauses" aria-labelledby="tab-clauses" className="w-full">
+                    <ClauseExplorerView document={document} onAskAboutClause={handleAskAboutClause} />
+                  </div>
                 )}
                 {activeTab === "compare" && document && (
-                  <CompareView documentA={document} />
+                  <div role="tabpanel" id="panel-compare" aria-labelledby="tab-compare" className="w-full">
+                    <CompareView documentA={document} />
+                  </div>
                 )}
                 {activeTab === "obligations" && document && (
-                  <ObligationsView document={document} />
+                  <div role="tabpanel" id="panel-obligations" aria-labelledby="tab-obligations" className="w-full">
+                    <ObligationsView document={document} />
+                  </div>
                 )}
                 {activeTab === "checklist" && document && (
-                  <ChecklistView document={document} onAskAboutItem={handleAskAboutClause} />
+                  <div role="tabpanel" id="panel-checklist" aria-labelledby="tab-checklist" className="w-full">
+                    <ChecklistView document={document} onAskAboutItem={handleAskAboutClause} />
+                  </div>
                 )}
                 {activeTab === "risk" && document && (
-                  <RiskReviewView document={document} />
+                  <div role="tabpanel" id="panel-risk" aria-labelledby="tab-risk" className="w-full">
+                    <RiskReviewView document={document} />
+                  </div>
                 )}
                 {activeTab === "inconsistencies" && document && (
-                  <InconsistenciesView document={document} />
+                  <div role="tabpanel" id="panel-inconsistencies" aria-labelledby="tab-inconsistencies" className="w-full">
+                    <InconsistenciesView document={document} />
+                  </div>
                 )}
                 {activeTab === "prepare" && document && (
-                  <PrepareView document={document} />
+                  <div role="tabpanel" id="panel-prepare" aria-labelledby="tab-prepare" className="w-full">
+                    <PrepareView document={document} />
+                  </div>
                 )}
                 {activeTab !== "chat" && activeTab !== "summary" && activeTab !== "document" && activeTab !== "clauses" && activeTab !== "compare" && activeTab !== "obligations" && activeTab !== "checklist" && activeTab !== "risk" && activeTab !== "inconsistencies" && activeTab !== "prepare" && (
                   <div className="flex-1 flex items-center justify-center text-slate">

@@ -37,6 +37,22 @@ describe('Document Extraction API', () => {
     expect(data.error).toBe('Only PDF files are supported');
   });
 
+  it('rejects oversized files', async () => {
+    const formData = new FormData();
+    const file = new File(['a'.repeat(21 * 1024 * 1024)], 'test.pdf', { type: 'application/pdf' });
+    formData.append('file', file);
+    
+    const req = new Request('http://localhost/api/documents/extract', {
+      method: 'POST',
+    });
+    req.formData = async () => formData;
+    
+    const res = await POST(req);
+    expect(res.status).toBe(413);
+    const data = await res.json();
+    expect(data.error).toBe('File size exceeds the 20MB limit');
+  });
+
   it('handles extraction failure safely', async () => {
     // Simulating a failed buffer read
     const formData = new FormData();
