@@ -279,7 +279,7 @@ export default function Workspace() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...messages, userMsg],
+          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
           documentContext: document ? { 
             filename: document.filename,
             pageCount: document.pageCount,
