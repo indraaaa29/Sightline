@@ -12,7 +12,7 @@ describe('Chat Grounding Boundary', () => {
   it('injects document context and legal disclaimer boundary', async () => {
     process.env.OPENROUTER_API_KEY = 'test-key';
     
-    let capturedBody: any;
+    let capturedBody: { messages: { role: string; content: string }[] };
     global.fetch = vi.fn().mockImplementation(async (url, options) => {
       capturedBody = JSON.parse(options.body);
       return {
@@ -29,7 +29,7 @@ describe('Chat Grounding Boundary', () => {
 
     await POST(req);
     
-    const sysMessages = capturedBody.messages.filter((m: any) => m.role === 'system');
+    const sysMessages = capturedBody!.messages.filter((m: { role: string; content: string }) => m.role === 'system');
     
     // Core boundary instruction check
     expect(sysMessages[0].content).toContain('Sightline provides information, not legal advice.');
@@ -44,7 +44,7 @@ describe('Chat Grounding Boundary', () => {
   it('protects against large documents by dropping context and replacing with boundary notice', async () => {
     process.env.OPENROUTER_API_KEY = 'test-key';
     
-    let capturedBody: any;
+    let capturedBody: { messages: { role: string; content: string }[] };
     global.fetch = vi.fn().mockImplementation(async (url, options) => {
       capturedBody = JSON.parse(options.body);
       return {
@@ -63,7 +63,7 @@ describe('Chat Grounding Boundary', () => {
 
     await POST(req);
     
-    const sysMessages = capturedBody.messages.filter((m: any) => m.role === 'system');
+    const sysMessages = capturedBody!.messages.filter((m: { role: string; content: string }) => m.role === 'system');
     
     // Second system message should be the fallback notice, not the huge text
     expect(sysMessages[1].content).toContain('too large for the current direct-analysis mode');

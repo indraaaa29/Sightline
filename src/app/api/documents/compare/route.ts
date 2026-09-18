@@ -44,19 +44,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "OpenRouter API key is missing." }, { status: 500 });
     }
 
-    if (!documentAContext || !documentAContext.pages || !documentBContext || !documentBContext.pages) {
+    if (!documentAContext || !Array.isArray(documentAContext.pages) || !documentBContext || !Array.isArray(documentBContext.pages)) {
       return NextResponse.json({ error: "Both documents must have extracted text to compare." }, { status: 400 });
     }
 
+    const CHARACTER_LIMIT = 400000;
+    
     // Build Context strings
     let docAText = `DOCUMENT A (${documentAContext.filename})\n`;
+    let cumulativeLength = docAText.length;
     for (const page of documentAContext.pages) {
-      docAText += `--- PAGE ${page.pageNumber} ---\n${page.text}\n\n`;
+      const pageText = `--- PAGE ${page.pageNumber} ---\n${page.text}\n\n`;
+      if (cumulativeLength + pageText.length > CHARACTER_LIMIT) {
+        return NextResponse.json({ error: "Documents are too large to compare in a single request." }, { status: 413 });
+      }
+      cumulativeLength += pageText.length;
+      docAText += pageText;
     }
 
     let docBText = `DOCUMENT B (${documentBContext.filename})\n`;
+    cumulativeLength += docBText.length;
+    if (cumulativeLength > CHARACTER_LIMIT) {
+      return NextResponse.json({ error: "Documents are too large to compare in a single request." }, { status: 413 });
+    }
+
     for (const page of documentBContext.pages) {
-      docBText += `--- PAGE ${page.pageNumber} ---\n${page.text}\n\n`;
+      const pageText = `--- PAGE ${page.pageNumber} ---\n${page.text}\n\n`;
+      if (cumulativeLength + pageText.length > CHARACTER_LIMIT) {
+        return NextResponse.json({ error: "Documents are too large to compare in a single request." }, { status: 413 });
+      }
+      cumulativeLength += pageText.length;
+      docBText += pageText;
     }
 
     const messages = [

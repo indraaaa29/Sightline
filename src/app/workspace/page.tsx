@@ -22,12 +22,24 @@ import { UploadedDocument, ChatMessage } from "@/lib/types";
 import { FileText, Menu } from "lucide-react";
 import Link from "next/link";
 
+const WORKSPACE_TABS = [
+  { id: "chat", label: "Chat" },
+  { id: "document", label: "Key Info" },
+  { id: "summary", label: "Understand" },
+  { id: "clauses", label: "Clauses" },
+  { id: "obligations", label: "Obligations" },
+  { id: "checklist", label: "Checklist" },
+  { id: "risk", label: "Risk Review" },
+  { id: "inconsistencies", label: "Conflicts" },
+  { id: "compare", label: "Compare" },
+  { id: "prepare", label: "Prepare" }
+] as const;
+
 export default function Workspace() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [document, setDocument] = useState<UploadedDocument | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [activeTab, setActiveTab] = useState<"chat" | "document" | "summary" | "clauses" | "obligations" | "checklist" | "risk" | "inconsistencies" | "compare" | "prepare">("chat");
-  const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [hasStartedChat, setHasStartedChat] = useState(false);
 
@@ -386,31 +398,20 @@ export default function Workspace() {
                 {/* Document tabs */}
                 <div className="flex justify-center border-b border-line px-6 pt-6 mb-6">
                   <div className="flex items-center gap-10" role="tablist" aria-label="Workspace Views">
-                    {([
-                      { id: "chat", label: "Chat" },
-                      { id: "document", label: "Key Info" },
-                      { id: "summary", label: "Understand" },
-                      { id: "clauses", label: "Clauses" },
-                      { id: "obligations", label: "Obligations" },
-                      { id: "checklist", label: "Checklist" },
-                      { id: "risk", label: "Risk Review" },
-                      { id: "inconsistencies", label: "Conflicts" },
-                      { id: "compare", label: "Compare" },
-                      { id: "prepare", label: "Prepare" }
-                    ] as const
-                    ).map((tab) => (
+                    {WORKSPACE_TABS.map((tab) => (
                       <button
                         key={tab.id}
                         role="tab"
                         aria-selected={activeTab === tab.id}
                         aria-controls={`panel-${tab.id}`}
                         id={`tab-${tab.id}`}
+                        tabIndex={activeTab === tab.id ? 0 : -1}
                         onClick={() => setActiveTab(tab.id)}
                         className={`pb-3 text-[14px] font-medium transition-colors relative ${
                           activeTab === tab.id ? "text-ink" : "text-slate/70 hover:text-ink"
                         }`}
                         onKeyDown={(e) => {
-                          const tabs = ["chat", "document", "summary", "clauses", "obligations", "checklist", "risk", "inconsistencies", "compare", "prepare"];
+                          const tabs = WORKSPACE_TABS.map(t => t.id);
                           const currentIndex = tabs.indexOf(tab.id);
                           if (e.key === "ArrowRight") {
                             const nextIndex = (currentIndex + 1) % tabs.length;
