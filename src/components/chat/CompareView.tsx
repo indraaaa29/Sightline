@@ -110,9 +110,9 @@ export default function CompareView({ documentA }: CompareViewProps) {
 
       setChanges(compareData.changes || []);
 
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      setCompareError(e.message || "An error occurred during comparison.");
+      setCompareError(e instanceof Error ? e.message : "An error occurred during comparison.");
       setDocumentB(null);
     } finally {
       setIsComparing(false);

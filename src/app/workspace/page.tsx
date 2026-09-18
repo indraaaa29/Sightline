@@ -133,7 +133,7 @@ export default function Workspace() {
     handleSendMessage(question);
   };
 
-  const performAnalysis = async (documentContext: any) => {
+  const performAnalysis = async (documentContext: { filename: string; pageCount: number; pages: { pageNumber: number; text: string }[]; extractionMethod: string }) => {
     setDocument((prev) => prev ? { ...prev, analysisStatus: "analyzing" } : null);
     try {
       const res = await fetch("/api/documents/analyze", {
@@ -386,7 +386,7 @@ export default function Workspace() {
                 {/* Document tabs */}
                 <div className="flex justify-center border-b border-line px-6 pt-6 mb-6">
                   <div className="flex items-center gap-10" role="tablist" aria-label="Workspace Views">
-                    {[
+                    {([
                       { id: "chat", label: "Chat" },
                       { id: "document", label: "Key Info" },
                       { id: "summary", label: "Understand" },
@@ -397,14 +397,15 @@ export default function Workspace() {
                       { id: "inconsistencies", label: "Conflicts" },
                       { id: "compare", label: "Compare" },
                       { id: "prepare", label: "Prepare" }
-                    ].map((tab) => (
+                    ] as const
+                    ).map((tab) => (
                       <button
                         key={tab.id}
                         role="tab"
                         aria-selected={activeTab === tab.id}
                         aria-controls={`panel-${tab.id}`}
                         id={`tab-${tab.id}`}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id)}
                         className={`pb-3 text-[14px] font-medium transition-colors relative ${
                           activeTab === tab.id ? "text-ink" : "text-slate/70 hover:text-ink"
                         }`}

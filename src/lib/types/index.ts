@@ -22,7 +22,7 @@ export interface DocumentAnalysis {
   clauses?: { title: string; whatItSays: string; summary: string; whyItMatters: string; riskLevel: "low" | "medium" | "high"; evidence?: Evidence }[];
   obligations?: { description: string; party: string; deadline?: string; conditions?: string; evidence?: Evidence }[];
   risks?: { concern: string; severity: "low" | "medium" | "high"; whatItSays: string; whyItMatters: string; whatToReview: string; evidence?: Evidence }[];
-  inconsistencies?: { topic: string; whyItDeservesReview: string; provision1: { text: string; evidence?: Evidence }; provision2: { text: string; evidence?: Evidence } }[];
+  inconsistencies?: { topic: string; whyItDeservesReview: string; provision1?: { text: string; evidence?: Evidence }; provision2?: { text: string; evidence?: Evidence }; description?: string; evidence?: Evidence }[];
   checklist?: { title: string; explanation?: string; priority?: "low" | "medium" | "high"; evidence?: Evidence; relatedClause?: string }[];
   reviewPrep?: {
     keyPoints: string[];

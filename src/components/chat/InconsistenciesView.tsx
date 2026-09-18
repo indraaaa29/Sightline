@@ -108,10 +108,10 @@ export default function InconsistenciesView({ document }: InconsistenciesViewPro
                   // Fallback for old schema if it accidentally generates description instead of the comparative schema
                   <div className="p-5">
                     <p className="text-[14px] text-ink leading-relaxed">
-                      {(inc as any).description}
+                      {inc.description}
                     </p>
-                    {(inc as any).evidence && (
-                      <EvidencePill evidence={(inc as any).evidence} />
+                    {inc.evidence && (
+                      <EvidencePill evidence={inc.evidence} />
                     )}
                   </div>
                 )}

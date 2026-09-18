@@ -3,10 +3,10 @@ import { DocumentPage } from "@/lib/types";
 
 export async function POST(req: Request) {
   if (typeof globalThis.DOMMatrix === 'undefined') {
-    (globalThis as any).DOMMatrix = class DOMMatrix {};
+    Object.assign(globalThis, { DOMMatrix: class DOMMatrix {} });
   }
   if (typeof globalThis.Path2D === 'undefined') {
-    (globalThis as any).Path2D = class Path2D {};
+    Object.assign(globalThis, { Path2D: class Path2D {} });
   }
   
   const pdf = require("pdf-parse/lib/pdf-parse.js");
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     const pages: DocumentPage[] = [];
 
     // Custom pagerender to capture individual pages securely
-    const render_page = async (pageData: any) => {
+    const render_page = async (pageData: { getTextContent: (opts: unknown) => Promise<{ items: { str: string, transform: number[] }[] }>, pageIndex: number }) => {
       const render_options = {
         normalizeWhitespace: false,
         disableCombineTextItems: false
@@ -88,10 +88,10 @@ export async function POST(req: Request) {
       status: "complete"
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PDF Extraction Error:", error);
     return NextResponse.json(
-      { error: "Failed to extract text from PDF.", details: error.message },
+      { error: "Failed to extract text from PDF.", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
